@@ -37,8 +37,9 @@ spec [0001](../specs/0001-stack-and-architecture.md) · code in .gitignore, scri
 ### 2. Coding standards and tooling · in-progress
 Capture conventions, then install linting, formatting, commit checks, and continuous integration from the scaffolded project.
 **Done when:** root `AGENTS.md` reflects the project conventions, and linting, formatting, commit checks, and tests run cleanly.
+spec [0001](../specs/0001-stack-and-architecture.md) · code in pyproject.toml, uv.lock, .sqlfluff, .pre-commit-config.yaml, .github/workflows/ci.yml
 - [x] Capture conventions + tooling choices: `/audit`
-- [ ] Install the tooling: `/develop tooling`
+- [x] Install the tooling: `/develop tooling`
 - [ ] Check it runs clean: `/test`
 
 ### 3. Data model and dual view contract · needs a decision
@@ -122,4 +123,3 @@ Out of scope for the current build pass, kept so the plan stays honest.
 - **Workflow tier tag** beside a heading (e.g. `· GA`, `· Prototype`) sets that one feature's rigor above or below the project default; no tag inherits the default. It decides the feature's check boxes and each skill's next suggestion.
 - **Workflow** (header line) is the project default, what runs after `/develop`: **Prototype** = nothing (trust develop's own build time self check); **Alpha** = `/check verify`; **Beta** = `/check verify` then `/test`; **GA** = adds a fresh model `/check review` then `/document`. A feature built on an unratified decision (an `Assumed` spec) stays flagged, but that never blocks `done`.
 - **Pointer line** (`spec <n> · code in <path>`): the spec link added by `/architect`, the code path by `/develop`.
-
