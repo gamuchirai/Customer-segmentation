@@ -1,7 +1,7 @@
 # 0001. Stack and Architecture for Customer Segmentation Pipeline
 
 **Date**: 2026-11-11
-**Status**: Proposed
+**Status**: In Progress
 
 ## Summary
 

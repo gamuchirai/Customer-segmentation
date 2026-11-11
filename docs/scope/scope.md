@@ -28,9 +28,9 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 ### 1. Stack and architecture · in-progress
 Decide the data, analytics, and reporting stack and scaffold the clean directory skeleton, repository ignore rules, and tracking baseline.
 **Done when:** the stack is recorded in a spec, raw datasets and local database binaries are excluded from version control, and the folder layout boots cleanly.
-spec [0001](../specs/0001-stack-and-architecture.md)
+spec [0001](../specs/0001-stack-and-architecture.md) · code in .gitignore, scripts/, tests/, docs/ai_log.md
 - [x] Decide the stack (spec): `/architect stack and architecture`
-- [ ] Scaffold from the decision: `/develop stack and architecture`
+- [x] Scaffold from the decision: `/develop stack and architecture`
 - [ ] Verify it: `/check verify stack and architecture`
 - [ ] Test it: `/test stack and architecture`
 
