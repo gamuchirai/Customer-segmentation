@@ -1,0 +1,83 @@
+{
+  "version": 2,
+  "skills": {
+    "jupyter-notebook": {
+      "source": "openai/skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/jupyter-notebook/SKILL.md",
+      "computedHash": "1c916a3da1adb570021712959aa51f992ed8f9c1de50b79f5eca43fffb0a2c4e"
+    },
+    "modern-python": {
+      "source": "trailofbits/skills",
+      "sourceType": "github",
+      "skillPath": "plugins/modern-python/skills/modern-python/SKILL.md",
+      "computedHash": "6f78e1948cc291dfc71672a87f83a02de3cec01545ed289312ce432d129ec00b"
+    },
+    "pandas-pro": {
+      "source": "Jeffallan/claude-skills",
+      "sourceType": "github",
+      "skillPath": "skills/pandas-pro/SKILL.md",
+      "computedHash": "3ab6f8326c1a7228532c79f7c11af4bc8820ff7a765948ebf4d0ca29d111039f"
+    },
+    "powerbi-modeling": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "skillPath": "skills/powerbi-modeling/SKILL.md",
+      "computedHash": "d65d6e41f307bf74d473a676cec7c39be0cdbcc36ff6594e01f95f5eba5f7f6a"
+    },
+    "pytest-coverage": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "skillPath": "skills/pytest-coverage/SKILL.md",
+      "computedHash": "5ebf8e7f62e91d2d6a41517055be778fc7bf962dd710a556a9b6c1216b511b07"
+    },
+    "python-ci": {
+      "source": "Paldom/python-skills",
+      "sourceType": "github",
+      "skillPath": "skills/python-ci/SKILL.md",
+      "computedHash": "3eaa907e5504e401760fd76916dff2cb2f74567da05854f6be5253114e483dd1"
+    },
+    "python-precommit": {
+      "source": "Paldom/python-skills",
+      "sourceType": "github",
+      "skillPath": "skills/python-precommit/SKILL.md",
+      "computedHash": "25dacf5ac0fb51dab7496579928812f49a3cc8cf9981d1f756eb8b465de614c4"
+    },
+    "ruff-linting": {
+      "source": "laurigates/claude-plugins",
+      "sourceType": "github",
+      "skillPath": "python-plugin/skills/ruff-linting/SKILL.md",
+      "computedHash": "09f05b752c27e96c101caf53d2bf7d7a40a814f17486351707117cc93278ed3f"
+    },
+    "scikit-learn": {
+      "source": "K-Dense-AI/scientific-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/scikit-learn/SKILL.md",
+      "computedHash": "072badf63201170ce6ffde828585222bca78b5551cf8e02e10bb8430ab602f1b"
+    },
+    "semantic-model-authoring": {
+      "source": "microsoft/skills-for-fabric",
+      "sourceType": "github",
+      "skillPath": "skills/semantic-model-authoring/SKILL.md",
+      "computedHash": "f087d7a8667e5535870e3b02b33894c7d2c8ee200966ce401926986bb5b0d451"
+    },
+    "sqlfluff": {
+      "source": "ivanshamaev/de-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/sqlfluff/SKILL.md",
+      "computedHash": "4750b656300d19ee5750686b1734465f72e25a7b9e44d1024103097fb3b6192e"
+    },
+    "sqlite-best-practices": {
+      "source": "erayack/sqlite-best-practices",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "e13873b3fcd97a7d7eda37d5308f8aeffafa23ad3110f7011a61b4ffc5e8646a"
+    },
+    "xlsx": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/xlsx/SKILL.md",
+      "computedHash": "3572b018005308f765480622987ef576fcdf9ea332d1024d3fe6c58cd65566a1"
+    }
+  }
+}
