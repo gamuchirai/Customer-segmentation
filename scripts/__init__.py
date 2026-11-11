@@ -1,2 +1,1 @@
 """Customer segmentation analytics package."""
-

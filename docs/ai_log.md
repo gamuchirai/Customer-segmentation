@@ -20,4 +20,3 @@ Keep these three dataset limits visible across every downstream query, chart, an
 | # | Date | Area | How AI Helped | How Output Was Verified or Corrected |
 |---|---|---|---|---|
 | 1 | 2026-11-11 | Stack and architecture | Evaluated local environment, Windows Power BI connectivity, and packaging options into Spec 0001 | Verified local `uv`, Python `3.13.5`, Power BI Desktop install, and missing Windows ODBC drivers; closed 5 setup gaps via independent cross check |
-
