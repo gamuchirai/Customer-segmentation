@@ -40,7 +40,7 @@ Capture conventions, then install linting, formatting, commit checks, and contin
 spec [0001](../specs/0001-stack-and-architecture.md) · code in pyproject.toml, uv.lock, .sqlfluff, .pre-commit-config.yaml, .github/workflows/ci.yml
 - [x] Capture conventions + tooling choices: `/audit`
 - [x] Install the tooling: `/develop tooling`
-- [ ] Check it runs clean: `/test`
+- [x] Check it runs clean: `/test`
 
 ### 3. Data model and dual view contract · needs a decision
 Define staging and cleaned transaction entities, row removal audit logging, dual denominator boundaries (store wide valid sales vs identified customers), and wholesale account flags.
