@@ -15,6 +15,7 @@ from scripts.db import (
 )
 from scripts.load_to_sql import (
     execute_cleaning_pipeline,
+    main,
     run_pipeline,
     sanitize_raw_records,
     validate_cli_flags,
@@ -345,3 +346,179 @@ def test_run_pipeline_end_to_end_with_synthetic_excel(tmp_path: Path):
     assert (export_dir / "dim_customers.csv").is_file()
     assert (export_dir / "cleaning_audit.parquet").is_file()
     assert (export_dir / "cleaning_audit.csv").is_file()
+
+
+def test_sanitize_raw_records_missing_columns():
+    """sanitize_raw_records raises ValueError when required column is missing."""
+    df = pd.DataFrame({"Invoice": ["123"], "StockCode": ["85048"]})
+    with pytest.raises(ValueError, match="missing required columns"):
+        sanitize_raw_records(df, sheet_name="Year 2009-2010", loaded_at="2026-11-12T00:00:00Z")
+
+
+def test_run_pipeline_stage_only(tmp_path: Path):
+    """AC-9: run_pipeline with --stage-only stages data without cleaning or exporting."""
+    excel_file = tmp_path / "synthetic_retail.xlsx"
+    db_file = tmp_path / "test_stage_only.db"
+
+    df_2009 = pd.DataFrame(SAMPLE_RAW_TRANSACTIONS[:2]).rename(
+        columns={
+            "invoice": "Invoice",
+            "stock_code": "StockCode",
+            "description": "Description",
+            "quantity": "Quantity",
+            "invoice_date": "InvoiceDate",
+            "price": "Price",
+            "customer_id": "Customer ID",
+            "country": "Country",
+        }
+    )
+    with pd.ExcelWriter(excel_file, engine="openpyxl") as writer:
+        df_2009.to_excel(writer, sheet_name="Year 2009-2010", index=False)
+        df_2009.to_excel(writer, sheet_name="Year 2010-2011", index=False)
+
+    conn = connect_db(db_file)
+    initialize_schema(conn)
+    conn.close()
+
+    args = argparse.Namespace(
+        stage_only=True,
+        clean_only=False,
+        rebuild=False,
+        no_export=True,
+        excel_path=excel_file,
+        db_path=db_file,
+        export_dir=tmp_path / "exports",
+    )
+    results = run_pipeline(args)
+    assert results["status"] == "staged_only"
+    assert results["staged_rows"] == 4
+
+    conn = connect_db(db_file)
+    cur = conn.cursor()
+    assert cur.execute("SELECT COUNT(*) FROM raw_transactions;").fetchone()[0] == 4
+    assert cur.execute("SELECT COUNT(*) FROM clean_transactions;").fetchone()[0] == 0
+    conn.close()
+
+
+def test_run_pipeline_clean_only_empty_raw(tmp_path: Path):
+    """run_pipeline raises RuntimeError when --clean-only is run on empty raw_transactions."""
+    db_file = tmp_path / "test_empty.db"
+    conn = connect_db(db_file)
+    initialize_schema(conn)
+    conn.close()
+
+    args = argparse.Namespace(
+        stage_only=False,
+        clean_only=True,
+        rebuild=False,
+        no_export=True,
+        excel_path=tmp_path / "dummy.xlsx",
+        db_path=db_file,
+        export_dir=tmp_path / "exports",
+    )
+    with pytest.raises(RuntimeError, match="raw_transactions is empty"):
+        run_pipeline(args)
+
+
+def test_canonical_product_description_tie_breaking(memory_db):
+    """AC-8: dim_products chooses most frequent description, tie-broken by date and alphabetical."""
+    insert_sql = """
+        INSERT INTO raw_transactions (
+            source_sheet, source_row_num, loaded_at, invoice, stock_code, description,
+            quantity, invoice_date, price, customer_id, country
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    """
+    rows = [
+        (
+            "Year 2009-2010",
+            2,
+            "2026-11-12T00:00:00Z",
+            "1001",
+            "TEST_CODE",
+            "OLDER DESC",
+            1,
+            "2010-01-01 10:00:00",
+            5.0,
+            "1001",
+            "United Kingdom",
+        ),
+        (
+            "Year 2009-2010",
+            3,
+            "2026-11-12T00:00:00Z",
+            "1002",
+            "TEST_CODE",
+            "NEWER DESC",
+            1,
+            "2010-05-01 10:00:00",
+            5.0,
+            "1001",
+            "United Kingdom",
+        ),
+    ]
+    with memory_db:
+        memory_db.executemany(insert_sql, rows)
+
+    execute_cleaning_pipeline(memory_db)
+    cur = memory_db.cursor()
+    cur.execute(
+        "SELECT canonical_description, description_variant_count "
+        "FROM dim_products WHERE stock_code = 'TEST_CODE';"
+    )
+    # Equal frequency (1 each): NEWER DESC has later date 2010-05-01 vs 2010-01-01
+    assert cur.fetchone() == ("NEWER DESC", 2)
+
+
+def test_customer_primary_country_tie_breaking(memory_db):
+    """AC-8: dim_customers prefers real country over Unspecified and breaks ties.
+
+    Tie-breaking hierarchy: valid country > Unspecified, frequency, latest date.
+    """
+    insert_sql = """
+        INSERT INTO raw_transactions (
+            source_sheet, source_row_num, loaded_at, invoice, stock_code, description,
+            quantity, invoice_date, price, customer_id, country
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    """
+    rows = [
+        (
+            "Year 2009-2010",
+            2,
+            "2026-11-12T00:00:00Z",
+            "1001",
+            "ITEM1",
+            "DESC1",
+            1,
+            "2010-01-01 10:00:00",
+            5.0,
+            "CUST_TIE",
+            "Unspecified",
+        ),
+        (
+            "Year 2009-2010",
+            3,
+            "2026-11-12T00:00:00Z",
+            "1002",
+            "ITEM1",
+            "DESC1",
+            1,
+            "2010-02-01 10:00:00",
+            5.0,
+            "CUST_TIE",
+            "France",
+        ),
+    ]
+    with memory_db:
+        memory_db.executemany(insert_sql, rows)
+
+    execute_cleaning_pipeline(memory_db)
+    cur = memory_db.cursor()
+    cur.execute("SELECT primary_country FROM dim_customers WHERE customer_id = 'CUST_TIE';")
+    # Real country France beats Unspecified despite equal frequency
+    assert cur.fetchone()[0] == "France"
+
+
+def test_main_cli_execution_and_error():
+    """AC-9: main() exits 0 on valid run and exits 1 on invalid arguments."""
+    # Invalid args returns 1
+    assert main(["--stage-only", "--clean-only"]) == 1

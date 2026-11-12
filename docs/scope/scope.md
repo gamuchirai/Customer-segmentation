@@ -67,8 +67,8 @@ spec [0003](../specs/0003-data-ingestion-and-cleaning/index.md) · code in scrip
   - [x] Implement calendar generation in `scripts/db.py` populating continuous `dim_date` (`AC-2`)
   - [x] Implement `scripts/load_to_sql.py` Excel reading, type coercion, dimension derivation, and CLI orchestration (`AC-1`, `AC-8`, `AC-9`)
   - [x] Connect automated `scripts/exports.py` export refreshes on successful clean runs (`AC-9`)
-- [ ] Verify it: `/check verify data ingestion and cleaning pipeline`
-- [ ] Test it: `/test data ingestion and cleaning pipeline`
+- [x] Verify it: `/check verify data ingestion and cleaning pipeline`
+- [x] Test it: `/test data ingestion and cleaning pipeline`
 
 ### 5. Executive KPIs and BI overview connection · in-progress
 Compute monthly revenue, distinct order counts, active customers, average order value, revenue per active customer, and repeat purchase rate, and wire the initial BI model and Executive Overview page.
