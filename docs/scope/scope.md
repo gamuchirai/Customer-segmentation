@@ -11,10 +11,10 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 
 | # | Feature | Phase | Status |
 |---|---------|-------|--------|
-| 1 | Stack and architecture | Foundation | in-progress |
-| 2 | Coding standards and tooling | Foundation | in-progress |
-| 3 | Data model and dual view contract | Foundation | in-progress |
-| 4 | Data ingestion and cleaning pipeline | Slice 1 | in-progress |
+| 1 | Stack and architecture | Foundation | done |
+| 2 | Coding standards and tooling | Foundation | done |
+| 3 | Data model and dual view contract | Foundation | done |
+| 4 | Data ingestion and cleaning pipeline | Slice 1 | done |
 | 5 | Executive KPIs and BI overview connection | Slice 1 | in-progress |
 | 6 | Monthly cohort retention analysis | Slice 2 | planned |
 | 7 | RFM scoring and customer segments | Slice 3 | planned |
@@ -25,7 +25,7 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 
 ## Foundations
 
-### 1. Stack and architecture · in-progress
+### 1. Stack and architecture · done
 Decide the data, analytics, and reporting stack and scaffold the clean directory skeleton, repository ignore rules, and tracking baseline.
 **Done when:** the stack is recorded in a spec, raw datasets and local database binaries are excluded from version control, and the folder layout boots cleanly.
 spec [0001](../specs/0001-stack-and-architecture.md) · code in .gitignore, scripts/, tests/, docs/ai_log.md
@@ -34,7 +34,7 @@ spec [0001](../specs/0001-stack-and-architecture.md) · code in .gitignore, scri
 - [x] Verify it: `/check verify stack and architecture`
 - [x] Test it: `/test stack and architecture`
 
-### 2. Coding standards and tooling · in-progress
+### 2. Coding standards and tooling · done
 Capture conventions, then install linting, formatting, commit checks, and continuous integration from the scaffolded project.
 **Done when:** root `AGENTS.md` reflects the project conventions, and linting, formatting, commit checks, and tests run cleanly.
 spec [0001](../specs/0001-stack-and-architecture.md) · code in pyproject.toml, uv.lock, .sqlfluff, .pre-commit-config.yaml, .github/workflows/ci.yml
@@ -42,7 +42,7 @@ spec [0001](../specs/0001-stack-and-architecture.md) · code in pyproject.toml, 
 - [x] Install the tooling: `/develop tooling`
 - [x] Check it runs clean: `/test`
 
-### 3. Data model and dual view contract · in-progress
+### 3. Data model and dual view contract · done
 Define staging and cleaned transaction entities, row removal audit logging, dual denominator boundaries (store wide valid sales vs identified customers), and wholesale account flags.
 **Done when:** schemas, derived fields, and metric boundaries support KPIs, cohorts, RFM, and deep dives without breaking changes later.
 spec [0002](../specs/0002-data-model-dual-view-contract.md) · code in sql/00_schema.sql, scripts/db.py, scripts/exports.py, tests/test_data_model.py
@@ -57,7 +57,7 @@ spec [0002](../specs/0002-data-model-dual-view-contract.md) · code in sql/00_sc
 
 ## Slice 1: Core pipeline and Executive KPI thread
 
-### 4. Data ingestion and cleaning pipeline · in-progress
+### 4. Data ingestion and cleaning pipeline · done
 Load raw workbook sheets safely into staging, apply explicit cleaning rules (cancellations, missing customer IDs, zero or negative values, postage and fee lines, exact duplicates), and log every removed row count.
 **Done when:** raw and cleaned tables populate repeatably, raw workbook stays untouched, and every cleaning rule reports exact removed row counts in the audit table.
 spec [0003](../specs/0003-data-ingestion-and-cleaning/index.md) · code in scripts/load_to_sql.py, sql/01_data_cleaning.sql, scripts/db.py, tests/test_data_ingestion.py
