@@ -182,3 +182,54 @@ def test_agents_md_documents_uv_and_quality_gates() -> None:
         assert expected_command in agents_text
 
     assert "pip install" not in agents_text
+
+
+# Covers: Spec 0001 (AC-1: Architecture decision recorded) & Scope Feature 1
+def test_spec_0001_records_stack_decision() -> None:
+    spec_text = _read_text("docs/specs/0001-stack-and-architecture.md")
+
+    assert "## Summary" in spec_text
+    assert "Option 1: Local SQLite with `uv`" in spec_text
+    assert "Chosen option" in spec_text
+    assert "retail.db" in spec_text
+
+
+# Covers: Spec 0001 (AC-4: Directory skeleton and clean boot) & Scope Feature 1
+def test_directory_skeleton_and_gitkeeps_exist() -> None:
+    expected_dirs = [
+        "dataset",
+        "exports",
+        "images",
+        "notebooks",
+        "powerbi",
+        "scripts",
+        "sql",
+        "tests",
+        "docs",
+    ]
+    for rel_dir in expected_dirs:
+        dir_path = REPO_ROOT / rel_dir
+        assert dir_path.is_dir(), f"Expected directory {rel_dir} does not exist"
+
+    expected_gitkeeps = [
+        "dataset/.gitkeep",
+        "exports/.gitkeep",
+        "images/.gitkeep",
+        "notebooks/.gitkeep",
+        "powerbi/.gitkeep",
+        "sql/.gitkeep",
+        "tests/fixtures/.gitkeep",
+    ]
+    for rel_gitkeep in expected_gitkeeps:
+        gitkeep_path = REPO_ROOT / rel_gitkeep
+        assert gitkeep_path.is_file(), f"Expected tracking file {rel_gitkeep} does not exist"
+
+
+# Covers: Spec 0001 (AC-5: AI log tracking baseline & caveats) & Scope Feature 1
+def test_ai_log_contains_baseline_caveats_and_standards() -> None:
+    log_text = _read_text("docs/ai_log.md")
+
+    assert "Missing customer IDs" in log_text
+    assert "Wholesale accounts" in log_text
+    assert "No campaign or margin history" in log_text
+    assert "| 1 | 2026-11-11 | Stack and architecture |" in log_text
