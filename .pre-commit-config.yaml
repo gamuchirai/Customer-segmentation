@@ -1,0 +1,62 @@
+# Install all configured stages locally with: uv run pre-commit install
+default_install_hook_types: [pre-commit, pre-push]
+
+repos:
+  # Hygiene checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+      - id: check-toml
+      - id: check-json
+      - id: check-added-large-files
+        args: [--maxkb=1024]
+      - id: check-merge-conflict
+      - id: detect-private-key
+
+  # Python lint and format (order matters: fixer first, formatter second)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.4  # keep in lockstep with ruff in pyproject.toml / uv.lock
+    hooks:
+      - id: ruff-check
+        args: [--fix, --exit-non-zero-on-fix]
+      - id: ruff-format
+
+  # Strip Jupyter notebook cell outputs before commit
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.9.1  # keep in lockstep with nbstripout in pyproject.toml / uv.lock
+    hooks:
+      - id: nbstripout
+
+  # SQLite SQL linting
+  - repo: https://github.com/sqlfluff/sqlfluff
+    rev: 4.5.0  # keep in lockstep with sqlfluff in pyproject.toml / uv.lock
+    hooks:
+      - id: sqlfluff-lint
+        args: [--dialect=sqlite]
+        files: ^sql/.*\.sql$
+
+  # Manifest and workflow schema validation
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.25
+    hooks:
+      - id: validate-pyproject
+        additional_dependencies: ["validate-pyproject-schema-store[all]"]
+
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.39.0
+    hooks:
+      - id: check-github-workflows
+
+  # Whole-project type check using the locked uv environment (pre-push stage)
+  - repo: local
+    hooks:
+      - id: ty
+        name: ty (pre-push)
+        entry: uv run ty check
+        language: unsupported
+        pass_filenames: false
+        stages: [pre-push]

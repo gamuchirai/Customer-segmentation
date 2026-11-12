@@ -1,7 +1,7 @@
 # 0001. Stack and Architecture for Customer Segmentation Pipeline
 
 **Date**: 2026-11-11
-**Status**: Proposed
+**Status**: In Progress
 
 ## Summary
 
@@ -135,4 +135,3 @@ Standardizing on `uv` (`pyproject.toml` plus `uv.lock`) instead of plain `pip` u
 - MotherDuck DuckDB Power Query Connector (evaluated DuckDB option): https://github.com/MotherDuck-Open-Source/duckdb-power-query-connector/releases/latest
 - `paldom/python-skills` registry page (`python-precommit`, `python-ci`): https://skills.sh/Paldom/python-skills
 - `openai/skills` registry page (`jupyter-notebook`): https://skills.sh/openai/skills
-

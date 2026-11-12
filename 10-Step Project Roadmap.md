@@ -141,4 +141,3 @@ Finalize your supporting documentation in `docs/ai_log.md` (and summarize it for
 
 ## Optional Phase 2 (Only After Core Project Ships)
 Once Steps 1–10 are published on GitHub, optionally add a separate `phase2_ga4/` folder or repo using BigQuery's `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*` dataset to build an e-commerce purchase funnel (`view_item` → `add_to_cart` → `begin_checkout` → `purchase`) and traffic source comparison.
-

@@ -1,0 +1,112 @@
+[project]
+name = "customer-segmentation"
+version = "0.1.0"
+description = "Customer segmentation and campaign recommendations analytics pipeline for UCI Online Retail II."
+requires-python = ">=3.13"
+dependencies = [
+    "openpyxl>=3.1.5",
+    "pandas>=3.1.1",
+    "pyarrow>=26.0.1",
+    "scikit-learn>=1.9.1",
+]
+
+[tool.uv]
+package = false
+default-groups = ["dev"]
+
+[dependency-groups]
+dev = [
+    { include-group = "lint" },
+    { include-group = "test" },
+    "nbstripout>=0.9.1",
+    "pre-commit>=4.7.0",
+]
+lint = [
+    "pandas-stubs>=3.1.0.261029",
+    "ruff>=0.17.4",
+    "sqlfluff>=4.5.0",
+    "ty>=0.0.100",
+]
+test = [
+    "pytest>=9.2.0",
+    "pytest-cov>=7.1.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+src = ["scripts", "tests"]
+extend-exclude = [".venv", "dataset", "exports"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D100",     # module docstring optional on thin helper scripts
+    "D104",     # package docstring optional
+    "D203",     # conflicts with D211 (no blank line before class docstring)
+    "D213",     # conflicts with D212 (multi-line summary starts on first line)
+    "COM812",   # trailing comma conflicts with ruff format
+    "ISC001",   # implicit string concat conflicts with ruff format
+    "CPY001",   # copyright notice headers not used in this repo
+    "ANN401",   # allow Any when gradual typing requires it
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+    "S101",     # allow assert in pytest
+    "PLR2004",  # allow magic test values
+    "ANN",      # annotations optional in tests
+    "D",        # docstrings optional in tests
+]
+"scripts/**/*.py" = [
+    "T20",      # allow CLI progress prints in batch runner scripts
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+
+[tool.ty.environment]
+python-version = "3.13"
+
+[tool.ty.src]
+include = ["scripts", "tests"]
+
+[tool.ty.rules]
+possibly-unresolved-reference = "error"
+unused-ignore-comment = "warn"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+]
+markers = [
+    "slow: marks tests that read the full raw Excel workbook",
+    "integration: marks end to end SQLite and export tests",
+]
+
+[tool.coverage.run]
+branch = true
+relative_files = true
+source = ["scripts"]
+omit = [
+    "*/__init__.py",
+    "*/__main__.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 80
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
+]

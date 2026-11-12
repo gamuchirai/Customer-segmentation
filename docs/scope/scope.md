@@ -11,11 +11,11 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 
 | # | Feature | Phase | Status |
 |---|---------|-------|--------|
-| 1 | Stack and architecture | Foundation | in-progress |
-| 2 | Coding standards and tooling | Foundation | in-progress |
-| 3 | Data model and dual view contract | Foundation | planned |
-| 4 | Data ingestion and cleaning pipeline | Slice 1 | planned |
-| 5 | Executive KPIs and BI overview connection | Slice 1 | planned |
+| 1 | Stack and architecture | Foundation | done |
+| 2 | Coding standards and tooling | Foundation | done |
+| 3 | Data model and dual view contract | Foundation | done |
+| 4 | Data ingestion and cleaning pipeline | Slice 1 | done |
+| 5 | Executive KPIs and BI overview connection | Slice 1 | in-progress |
 | 6 | Monthly cohort retention analysis | Slice 2 | planned |
 | 7 | RFM scoring and customer segments | Slice 3 | planned |
 | 8 | Clustering validation | Slice 3 | planned |
@@ -25,38 +25,63 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 
 ## Foundations
 
-### 1. Stack and architecture · in-progress
+### 1. Stack and architecture · done
 Decide the data, analytics, and reporting stack and scaffold the clean directory skeleton, repository ignore rules, and tracking baseline.
 **Done when:** the stack is recorded in a spec, raw datasets and local database binaries are excluded from version control, and the folder layout boots cleanly.
-spec [0001](../specs/0001-stack-and-architecture.md)
+spec [0001](../specs/0001-stack-and-architecture.md) · code in .gitignore, scripts/, tests/, docs/ai_log.md
 - [x] Decide the stack (spec): `/architect stack and architecture`
-- [ ] Scaffold from the decision: `/develop stack and architecture`
-- [ ] Verify it: `/check verify stack and architecture`
-- [ ] Test it: `/test stack and architecture`
+- [x] Scaffold from the decision: `/develop stack and architecture`
+- [x] Verify it: `/check verify stack and architecture`
+- [x] Test it: `/test stack and architecture`
 
-### 2. Coding standards and tooling · in-progress
+### 2. Coding standards and tooling · done
 Capture conventions, then install linting, formatting, commit checks, and continuous integration from the scaffolded project.
 **Done when:** root `AGENTS.md` reflects the project conventions, and linting, formatting, commit checks, and tests run cleanly.
+spec [0001](../specs/0001-stack-and-architecture.md) · code in pyproject.toml, uv.lock, .sqlfluff, .pre-commit-config.yaml, .github/workflows/ci.yml
 - [x] Capture conventions + tooling choices: `/audit`
-- [ ] Install the tooling: `/develop tooling`
-- [ ] Check it runs clean: `/test`
+- [x] Install the tooling: `/develop tooling`
+- [x] Check it runs clean: `/test`
 
-### 3. Data model and dual view contract · needs a decision
+### 3. Data model and dual view contract · done
 Define staging and cleaned transaction entities, row removal audit logging, dual denominator boundaries (store wide valid sales vs identified customers), and wholesale account flags.
 **Done when:** schemas, derived fields, and metric boundaries support KPIs, cohorts, RFM, and deep dives without breaking changes later.
-- [ ] Design it (spec): `/architect data model`
+spec [0002](../specs/0002-data-model-dual-view-contract.md) · code in sql/00_schema.sql, scripts/db.py, scripts/exports.py, tests/test_data_model.py
+- [x] Design it (spec): `/architect data model`
+- [x] Build it: `/develop data model`
+  - [x] Create `sql/00_schema.sql` `STRICT` tables, indexes, dual views, and rule seeds (`AC-1` to `AC-8`)
+  - [x] Build `scripts/db.py` connection pragmas, atomic schema setup, and contract validation (`AC-8`, `AC-10`)
+  - [x] Build `scripts/exports.py` explicit `pyarrow.Schema` Parquet and atomic CSV exports (`AC-9`)
+  - [x] Add synthetic fixture contract tests covering constraints, signed audit math, tie breaking, and exports (`AC-1` to `AC-10`)
+- [x] Verify it: `/check verify data model`
+- [x] Test it: `/test data model`
 
 ## Slice 1: Core pipeline and Executive KPI thread
 
-### 4. Data ingestion and cleaning pipeline · needs a decision
+### 4. Data ingestion and cleaning pipeline · done
 Load raw workbook sheets safely into staging, apply explicit cleaning rules (cancellations, missing customer IDs, zero or negative values, postage and fee lines, exact duplicates), and log every removed row count.
 **Done when:** raw and cleaned tables populate repeatably, raw workbook stays untouched, and every cleaning rule reports exact removed row counts in the audit table.
-- [ ] Design it (spec): `/architect data ingestion and cleaning`
+spec [0003](../specs/0003-data-ingestion-and-cleaning/index.md) · code in scripts/load_to_sql.py, sql/01_data_cleaning.sql, scripts/db.py, tests/test_data_ingestion.py
+- [x] Design it (spec): `/architect data ingestion and cleaning`
+- [x] Build it: `/develop data ingestion and cleaning pipeline`
+  - [x] Write `sql/01_data_cleaning.sql` deduplication, fee exclusion, clean fact load, and sequential audit logging (`AC-3` to `AC-7`)
+  - [x] Implement calendar generation in `scripts/db.py` populating continuous `dim_date` (`AC-2`)
+  - [x] Implement `scripts/load_to_sql.py` Excel reading, type coercion, dimension derivation, and CLI orchestration (`AC-1`, `AC-8`, `AC-9`)
+  - [x] Connect automated `scripts/exports.py` export refreshes on successful clean runs (`AC-9`)
+- [x] Verify it: `/check verify data ingestion and cleaning pipeline`
+- [x] Test it: `/test data ingestion and cleaning pipeline`
 
-### 5. Executive KPIs and BI overview connection · needs a decision
+### 5. Executive KPIs and BI overview connection · in-progress
 Compute monthly revenue, distinct order counts, active customers, average order value, revenue per active customer, and repeat purchase rate, and wire the initial BI model and Executive Overview page.
 **Done when:** KPI trend metrics and Executive Overview cards render from live queries and reconcile one to one with query totals.
-- [ ] Design it (spec): `/architect executive KPIs and BI overview`
+spec [0004](../specs/0004-executive-kpis-and-bi-overview.md) · code in sql/02_kpi_and_cohorts.sql, scripts/kpis.py, tests/test_kpis.py, powerbi/
+- [x] Design it (spec): `/architect executive KPIs and BI overview`
+- [ ] Build it: `/develop executive KPIs and BI overview`
+  - [ ] Create `sql/02_kpi_and_cohorts.sql` dual scope KPI views (`vw_kpi_monthly`, `vw_kpi_overall`) with global partial month and `LAG()` metrics (`AC-1` to `AC-5`)
+  - [ ] Implement `scripts/kpis.py` KPI runner and Parquet reconciliation plus `tests/test_kpis.py` synthetic parity suite (`AC-6`, `AC-7`)
+  - [ ] Write `powerbi/executive_overview_blueprint.md` M, DAX, and visual specification (`AC-8`)
+  - [ ] Wire and reconcile `powerbi/customer_segmentation.pbix` Page 1 Executive Overview against query totals (`AC-8`, `AC-9`)
+- [ ] Verify it: `/check verify executive KPIs and BI overview`
+- [ ] Test it: `/test executive KPIs and BI overview`
 
 ## Slice 2: Cohort retention thread
 
@@ -122,4 +147,3 @@ Out of scope for the current build pass, kept so the plan stays honest.
 - **Workflow tier tag** beside a heading (e.g. `· GA`, `· Prototype`) sets that one feature's rigor above or below the project default; no tag inherits the default. It decides the feature's check boxes and each skill's next suggestion.
 - **Workflow** (header line) is the project default, what runs after `/develop`: **Prototype** = nothing (trust develop's own build time self check); **Alpha** = `/check verify`; **Beta** = `/check verify` then `/test`; **GA** = adds a fresh model `/check review` then `/document`. A feature built on an unratified decision (an `Assumed` spec) stays flagged, but that never blocks `done`.
 - **Pointer line** (`spec <n> · code in <path>`): the spec link added by `/architect`, the code path by `/develop`.
-

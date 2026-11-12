@@ -1,0 +1,11 @@
+{
+  "tool": "pytest",
+  "gate": null,
+  "additionalTools": [
+    "pytest-cov"
+  ],
+  "e2eTool": "none",
+  "testDir": "tests/",
+  "filePattern": "test_*.py",
+  "packageManager": "uv"
+}
